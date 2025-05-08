@@ -17,6 +17,9 @@ WORKDIR $APP_HOME
 # COPY poetry.lock pyproject.toml ./
 # RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
+RUN python -m venv venv
+RUN . venv/bin/activate
+
 # Using pip and requirements.txt
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip
@@ -28,4 +31,4 @@ COPY ./src $APP_HOME/src
 # Command to run the application using Gunicorn
 # Gunicorn is recommended for production deployment of FastAPI apps
 # Cloud Run automatically provides the PORT environment variable
-CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 src.mcp_server:app 
+CMD exec gunicorn --bind :$PORT --workers 1 --timeout 120 --worker-class uvicorn.workers.UvicornWorker --threads 8 src.mcp_server:app 
